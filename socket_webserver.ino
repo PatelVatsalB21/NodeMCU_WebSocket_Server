@@ -5,7 +5,7 @@
 #include <WiFiUdp.h>
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "asia.pool.ntp.org");
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 const char* ssid = "ASUS";
 const char* password = "9974702102";
@@ -194,6 +194,13 @@ const char index_html[] PROGMEM = R"rawliteral(
   var gateway = `ws://${window.location.hostname}/ws`;
   var websocket;
   var logtxt = [];
+
+  var currentdate = new Date(); 
+  datee = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear();
+
+  
   window.addEventListener('load', onLoad);
   let interval = setInterval(function() {
     document.getElementById("check").click();
@@ -223,7 +230,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     distance = parseInt(arr[0]);
     if (distance < 80){
       document.getElementById('distance').innerHTML = distance;
-      document.getElementById('time').innerHTML = arrt[0]+ ", " +arrt[1];
+      document.getElementById('time').innerHTML = arrt[0]+ ", " + datee;
       document.getElementById("card1").style.display = "block";
       document.getElementById("card2").style.display = "none";
       if (navigator.vibrate) {
@@ -300,9 +307,9 @@ const char index_html[] PROGMEM = R"rawliteral(
         itemarrt = itemarr[1].split("/");
         console.log("itemarrt");
         console.log(itemarrt);
-        item.appendChild(document.createTextNode("Object Detected at " + itemarr[0] +" cm at "+ itemarrt[0] + " on "+itemarrt[1]));
+        item.appendChild(document.createTextNode("Object Detected at " + itemarr[0] +" cm at "+ itemarrt[0] + " on " + datee));
         list.appendChild(item);
-        logtxt[i] = "Object Detected at " + itemarr[0] +" cm at "+ itemarrt[0] + " on "+itemarrt[1] + "\n"
+        logtxt[i] = "Object Detected at " + itemarr[0] +" cm at "+ itemarrt[0] + " on "+ datee + "\n"
     }
     return list;  
   }  
@@ -435,6 +442,7 @@ int readUS(){
   delayMicroseconds(100);
   digitalWrite(echo, LOW);
   int distance = microsecondsToCentimeters(pulseIn(trig, HIGH));
+  Serial.println("distance");
   Serial.println(distance);
   return distance;
 }
@@ -444,8 +452,10 @@ long microsecondsToCentimeters(long microseconds){
 }
 
 String check_reading(){
-//  dist = readUS();
-  dist = random(1,200);
+  dist = readUS();
+//  dist = random(1,200);
+//  Serial.println("distance");
+//  Serial.println(dist);
   if(dist>1000){
     dist  = 0;
   }
